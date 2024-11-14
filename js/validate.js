@@ -1,4 +1,4 @@
-export function validateCard() {
+  function validateCard() {
     if (midInput1.value.length < 8) {
         alert("URL 8 belgidan kam bolmasin");
         midInput1.focus();

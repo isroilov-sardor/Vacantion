@@ -1,5 +1,4 @@
-import {validateCard} from "./validate.js";
-
+import { createCard } from "./create.js";
 const midInput1 = document.querySelector("#mid-input1");
 const midInput2 = document.querySelector("#mid-input2");
 const firstCheckingInput = document.querySelector("#first-checking-input");
@@ -16,48 +15,42 @@ const button = document.querySelector("#all-save-btn");
 const wrapper = document.querySelector(".blocks-container");
 const midcont = document.querySelector(".midle");
 
-function createCard(value, index) {
-    return `
-        <div class="wrapper" data-index="${index}">
-            <div class="blocks-first-same">
-                <img id="blocks-image" src="${
-                    value.midInput1
-                }" width="88" height="88" alt="image">
-                <div class="block-same">
-                    <div class="info-blocks">
-                        <div class="info-company">${value.midInput2}</div>
-                        ${
-                            value.firstCheckingInput
-                                ? `<div class="info-new">NEW!</div>`
-                                : ""
-                        }
-                        ${
-                            value.secondCheckingInput
-                                ? `<div class="info-featured">FEATURED</div>`
-                                : ""
-                        }
-                    </div>
-                    <div class="info-work">${value.midCheck}</div>
-                    <div class="info-data">
-                        <div class="info-day">${value.select1Sel}</div>
-                        <img src="./images/oval.svg" alt="oval-image">
-                        <div class="info-time">${value.select2Sel}</div>
-                        <img src="./images/oval.svg" alt="oval-image">
-                        <div class="info-place">${value.select3Sel}</div>
-                    </div>
-                </div>
-            </div>
-            <div class="second-same">
-                <img class="del-button" src="./images/del-icon.svg" width="30" height="30" alt="image">
-                <div class="second-info">
-                    ${value.skil1 ? '<div class="info1">Full stack</div>' : ""}
-                    ${value.skil2 ? '<div class="info2">Senior</div>' : ""}
-                    ${value.skil3 ? '<div class="info3">Python</div>' : ""}
-                    ${value.skil4 ? '<div class="info4">React</div>' : ""}
-                </div>
-            </div>
-        </div>
-    `;
+function validateCard() {
+    if (midInput1.value.length < 8) {
+        alert("URL 8 belgidan kam bolmasin");
+        midInput1.focus();
+        return false;
+    }
+    if (midInput2.value.length <= 2) {
+        alert("kompaniya nomi 2ta belgidan kam bolmasin");
+        midInput2.focus();
+        return false;
+    }
+    if (!firstCheckingInput.checked && !secondCheckingInput.checked) {
+        alert("Yangi yoki featuredni tanlang");
+        return false;
+    }
+    if (midCheck.value.length < 5) {
+        alert("lavozim notogri berilgan");
+        return false;
+    }
+    if (select1Sel.value == "Tanlang") {
+        alert("Vaqt maydonini tanlang!");
+        return false;
+    }
+    if (select2Sel.value === "Tanlang") {
+        alert("Ish turi maydonini tanlash kerak");
+        return false;
+    }
+    if (select3Sel.value === "Tanlang") {
+        alert("Joylashuv maydonini tanlash kerak");
+        return false;
+    }
+    if (!skil1.checked && !skil2.checked && !skil3.checked && !skil4.checked) {
+        alert("Xech bolmaganda bitta konikma tanlanishi kerak!");
+        return false;
+    }
+    return true;
 }
 
 function saveToLocalStorage(cards) {
@@ -74,34 +67,64 @@ function loadFromLocalStorage() {
 
 document.addEventListener("DOMContentLoaded", loadFromLocalStorage);
 
-button &&
-    button.addEventListener("click", function (event) {
-        event.preventDefault();
-        if (validateCard()) {
-            const data = {
-                midInput1: midInput1.value,
-                midInput2: midInput2.value,
-                firstCheckingInput: firstCheckingInput.checked,
-                secondCheckingInput: secondCheckingInput.checked,
-                midCheck: midCheck.value,
-                select1Sel: select1Sel.value,
-                select2Sel: select2Sel.value,
-                select3Sel: select3Sel.value,
-                skil1: skil1.checked,
-                skil2: skil2.checked,
-                skil3: skil3.checked,
-                skil4: skil4.checked,
-            };
-            const cards = JSON.parse(localStorage.getItem("cards")) || [];
-            cards.push(data);
-            saveToLocalStorage(cards);
+button.addEventListener("click", function (event) {
+    event.preventDefault();
+    if (
+        validateCard(
+            midInput1,
+            midInput2,
+            firstCheckingInput,
+            secondCheckingInput,
+            midCheck,
+            select1Sel,
+            select2Sel,
+            select3Sel,
+            skil1,
+            skil2,
+            skil3,
+            skil4
+        )
+    ) {
+        const data = {
+            midInput1: midInput1.value,
+            midInput2: midInput2.value,
+            firstCheckingInput: firstCheckingInput.checked,
+            secondCheckingInput: secondCheckingInput.checked,
+            midCheck: midCheck.value,
+            select1Sel: select1Sel.value,
+            select2Sel: select2Sel.value,
+            select3Sel: select3Sel.value,
+            skil1: skil1.checked,
+            skil2: skil2.checked,
+            skil3: skil3.checked,
+            skil4: skil4.checked,
+        };
 
-            let card = createCard(data, cards.length - 1);
-            wrapper.innerHTML += card;
+        const cards = JSON.parse(localStorage.getItem("cards")) || [];
+        cards.push(data);
+        saveToLocalStorage(cards);
 
-            midcont.reset();
-        }
-    });
+        let card = createCard(data, cards.length - 1);
+        wrapper.innerHTML += card;
+
+        // Inputlar va checkboxlarni reset qilish
+        midInput1.value = "";
+        midInput2.value = "";
+        midCheck.value = "";
+        select1Sel.selectedIndex = 0;
+        select2Sel.selectedIndex = 0;
+        select3Sel.selectedIndex = 0;
+
+        // Checkboxlarni tozalash
+        skil1.checked = false;
+        skil2.checked = false;
+        skil3.checked = false;
+        skil4.checked = false;
+
+        // Yoki formani reset qilish
+        midcont.reset(); // Bu formani tozalaydi, lekin selectlar va checkboxlar reset bo'ladi.
+    }
+});
 
 wrapper.addEventListener("click", function (event) {
     if (event.target.classList.contains("del-button")) {
