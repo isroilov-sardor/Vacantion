@@ -15,7 +15,7 @@ export function createCard(value, index) {
                         }
                         ${
                             value.secondCheckingInput
-                                ? `<div class="info-featured">FEATURED</div>`
+                                ? `<div class="info-feat">FEATURED</div>`
                                 : ""
                         }
                     </div>

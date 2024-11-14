@@ -107,28 +107,26 @@ button.addEventListener("click", function (event) {
         let card = createCard(data, cards.length - 1);
         wrapper.innerHTML += card;
 
-        // Inputlar va checkboxlarni reset qilish
         midInput1.value = "";
         midInput2.value = "";
         midCheck.value = "";
         select1Sel.selectedIndex = 0;
         select2Sel.selectedIndex = 0;
         select3Sel.selectedIndex = 0;
-
-        // Checkboxlarni tozalash
+        firstCheckingInput.checked = false;
+        secondCheckingInput = false;
         skil1.checked = false;
         skil2.checked = false;
         skil3.checked = false;
         skil4.checked = false;
 
-        // Yoki formani reset qilish
-        midcont.reset(); // Bu formani tozalaydi, lekin selectlar va checkboxlar reset bo'ladi.
+        midcont.reset();
     }
 });
 
 wrapper.addEventListener("click", function (event) {
     if (event.target.classList.contains("del-button")) {
-        const card = event.target.closest(".wrapper"); // Kartani topamiz
+        const card = event.target.closest(".wrapper");
         const index = card.getAttribute("data-index");
 
         card.remove();
